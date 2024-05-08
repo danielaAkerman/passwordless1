@@ -1,6 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-// import {} from "lib/firestore"
+import { firestore } from "lib/firestore"
 
-export default function (req: NextApiRequest, res: NextApiResponse) {
-    res.send("Hola soy la api"+ process.env.FIREBASE_CONNECTION)
+export default async function (req: NextApiRequest, res: NextApiResponse) {
+
+
+    const newUser = await firestore.collection('auth').add({
+        email: "danielaakerman14@gmail.com"
+    })
+    res.send(newUser)
+
+
 }
