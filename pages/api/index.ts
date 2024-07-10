@@ -1,13 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next"
-import { firestore } from "lib/firestore"
+import { Auth } from "lib/auth"
+import { User } from "lib/user"
+import { findOrCreateAuth } from "lib/controllers/auth"
+import { sendCode } from "lib/controllers/auth"
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
 
+    const auth = await sendCode(req.body.email)
+    // const auth = await findOrCreateAuth(req.body.email)
 
-    const newUser = await firestore.collection('auth').add({
-        email: "danielaakerman14@gmail.com"
-    })
-    res.send(newUser)
-
+    res.send(auth)
 
 }
