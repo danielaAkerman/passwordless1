@@ -21,12 +21,23 @@ export class Auth {
         this.ref.update(this.data)
     }
 
+    isCodeValid() {
+        const expires = this.data.expires
+        const now = Date.now()
+        const isValid = expires >= now
+        return isValid
+    }
+
+    static cleanEmail(email: string) {
+        return email.trim().toLowerCase()
+    }
+
     static async findByEmail(email: string) {
         // No pertenece a una instancia, pertenece a la clase
         // Quiero que este método me genere una instancia a la clase
         // genera una nueva instancia de auth
 
-        const cleanEmail = email.trim().toLowerCase()
+        const cleanEmail = Auth.cleanEmail(email)
         const results = await collection.where('email', '==', cleanEmail).get()
         if (results.docs.length) {
             const first = results.docs[0]
@@ -42,6 +53,25 @@ export class Auth {
         const newUSer = new Auth(newUserSnap.id)
         newUSer.data = data
         return newUSer
+    }
+
+
+    static async findByEmailAndCode(email: string, code: number) {
+        const cleanEmail = Auth.cleanEmail(email)
+        const result = await collection
+            .where("email", "==", cleanEmail)
+            .where("code", "==", code)
+            .get()
+        if (result.empty) {
+            console.error("Email y code no coinciden")
+            return null
+        } else {
+            const doc = result.docs[0]
+            const auth = new Auth(doc.id)
+            auth.data = doc.data()
+            return auth
+        }
+
     }
 }
 

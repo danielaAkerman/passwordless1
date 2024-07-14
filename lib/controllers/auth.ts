@@ -33,12 +33,13 @@ export async function sendCode(email: string) {
     const code = Math.floor(Math.random() * 100000)
     auth.data.code = code
 
-    const now = Date.now()
-    const expires = now + 1200
+    const expires = (Date.now() + 1200000)
     auth.data.expires = expires
 
     await auth.push()
-    
-    return { auth }
+
+    console.log("Mail enviado a " + email + " con el código " + code)
+
+    return true
 
 }
